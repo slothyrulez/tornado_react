@@ -1,0 +1,12 @@
+PyExecJS==1.1.0
+PyReact
+invoke==0.10.1
+ipdb==0.8
+ipython==3.1.0
+pep8==1.6.2
+pyflakes==0.8.1
+virtualenv==12.1.1
+certifi==14.5.14
+Jinja2==2.7.3
+MarkupSafe==0.23
+tornado==4.1

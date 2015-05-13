@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+    <head lang="en">
+        <meta charset="UTF-8">
+        <title>Tornado React</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="shortcut icon" href="/favicon.ico">
+        <!-- styles -->
+        <link media="all" href="{{ static_url('css/search.css') }}" rel="stylesheet"></link>
+    </head>
+    <body>
+        <!-- scripts -->
+        <script src="{{ static_url('js/react/react.js') }}"></script>
+        <script src="{{ static_url('js/react/JSXTransformer.js') }}"></script>
+
+        <div class="container">
+            <h1>TORNADO React</h1>
+            <br>
+            <div id="search"></div>
+            {% include "DynamicSearchComponent.js" %}
+        </div>
+    </body>
+</html>
