@@ -33,7 +33,7 @@ var CommentForm = React.createClass({
         if ( !text || !author) {
             return;
         }
-        console.log(this.refs, this);
+        this.props.onCommentSubmit({author: author, text: text});
         React.findDOMNode(this.refs.author).value = "";
         React.findDOMNode(this.refs.text).value = "";
         return;
@@ -41,8 +41,8 @@ var CommentForm = React.createClass({
     render : function(){
         return (
             <form className="commentForm" onSubmit={this.handleSubmit}>
-                <input type="text" placeholder="Your name" ref="author"/>
-                <input type="text" placeholder="Say something..." ref="text"/>
+                <input type="text" placeholder="Your name" ref="author" />
+                <input type="text" placeholder="Say something..." ref="text" />
                 <input type="submit" value="Post" />
             </form>
         );
@@ -71,7 +71,21 @@ var CommentBox = React.createClass({
         return {data: []};
     },
     handleCommentSubmit: function(comment) {
-        // TODO: submit to the server and refresh the list
+        var comments = this.state.data;
+        var newComments = comments.concat([comment]);
+        this.setState({data: newComments});
+        $.ajax({
+            url: this.props.url,
+            dataType: "json",
+            type: "POST",
+            data: comment,
+            success: function(data){
+                this.setState({data: data.data});
+            }.bind(this),
+            error: function(xhr, status, err){
+                console.error(this.props.url, status, err.toString());
+            }.bind(this),
+        });
     },
     componentDidMount: function() {
         this.loadCommentsFromServer();
@@ -94,15 +108,15 @@ var CommentBox = React.createClass({
         return (
             <div className="commentBox">
                 <h1>Comments</h1>
-                <CommentList data={this.state.data}/>
-                <CommentForm />
+                <CommentList data={this.state.data} />
+                <CommentForm onCommentSubmit={this.handleCommentSubmit} />
             </div>
         );
     }
 });
 
 React.render(
-    <CommentBox url="api/comments" poll_interval={200}/>,
+    <CommentBox url="api/comments" poll_interval={200} />,
     document.getElementById('comments')
 )
 

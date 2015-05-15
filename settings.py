@@ -24,9 +24,9 @@ settings["media_root"] = MEDIA_ROOT
 settings["static_path"] = STATIC_ROOT
 settings["static_js_path"] = path(STATIC_ROOT, "js")
 
-## MOTOR SETTINGS
-# import motor
-#settings["db"] = motor.MotorClient("mongodb://localhost:27017").react_tweets
+# MOTOR SETTINGS
+import motor
+settings["db"] = motor.MotorClient("mongodb://localhost:27017").react_comments
 
 tornado.options.define("port", default=8888, help="run on the given port", type=int)
 tornado.options.define("config", default=None, help="tornado config file")

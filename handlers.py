@@ -1,46 +1,27 @@
 #! -*- coding: utf-8 -*-
 
+# Python std
 import os
 
+# Tornado
 import tornado.web
-
+import tornado.gen
+# Jinja
 from jinja2 import Environment, ChoiceLoader, FileSystemLoader, FunctionLoader, TemplateNotFound
 
+# PyReact
 from react.jsx import JSXTransformer, TransformError
 
+# Application
 import settings
-
-# def react_component_loader(name):
-#     """ """
-#     print(name)
-#     try:
-#         return JSXTransformer().transform_string(name)
-#     except TransformError as e:
-#         raise CompilerError(str(e))
 
 class ReactFileSystemStringLoader(FileSystemLoader):
 
     def get_source(self, environment, template):
         contents, filename, uptodate  = super(ReactFileSystemStringLoader, self).get_source(environment, template)
         contents = JSXTransformer().transform_string(contents)
-        print("REACCCTTTTTTTTTTTTT")
-        print("REACCCTTTTTTTTTTTTT", contents)
         return contents, filename, uptodate
 
-
-# class ReactFileSystemStringTransformer(FileSystemLoader):
-#     def get_source(self, environment, template):
-#         contents, filename, uptodate  = super(ReactFileSystemStringTransformer, self).get_source(environment, template)
-
-#         outfile = os.path.join(settings.settings["static_js_path"], os.path.basename(filename))
-
-#         print("", outfile)
-#         js = JSXTransformer().transform_string(contents)
-#         with open(outfile, 'wb') as o:
-#             o.write(js.encode('utf8'))
-#         to_template = "<script src='{{ static_url('js/%s') }}'></script>" % filename
-#         print(to_template)
-#         return to_template, filename, uptodate
 
 def React_FileSystem_String_Transformer(name):
 
@@ -91,6 +72,7 @@ class BaseHandler(tornado.web.RequestHandler, TemplateRendering):
         """
         kwargs.update({
             'settings': self.application.settings,
+            'db': self.application.settings["db"],
             'static_url': self.static_url,
             'request': self.request,
             'xsrf_token': self.xsrf_token,
@@ -98,12 +80,8 @@ class BaseHandler(tornado.web.RequestHandler, TemplateRendering):
         })
         self.write(self.render_template(template_name, **kwargs))
 
-class JSONBaseHandler(BaseHandler):
-    pass
-
 class MainHandler(BaseHandler):
     def get(self):
-        print("GET")
         self.render_jinja("basic.html")
 
 class CommentsHandler(BaseHandler):
@@ -112,10 +90,45 @@ class CommentsHandler(BaseHandler):
 
 
 class CommentsDataHandler(tornado.web.RequestHandler):
+    @tornado.gen.coroutine
     def get(self):
+        db = self.settings["db"]
+        comments = db.react_comments.comments
+        cursor = comments.find()
+        while (yield cursor.fetch_next):
+            doc = cursor.next_object
+            print(type(doc))
+
+        import ipdb
+        ipdb.set_trace()
+
         data = { "data": [
             { "author": "Pete Hunt", "text": "This is one comment"},
             { "author": "Jordan Walke", "text": "This is *another* comment"}
         ]}
+
         print("api/CommentsHandler")
         self.write(data)
+
+    def post(self):
+        db = self.settings["db"]
+        comments = db.react_comments.comments
+
+        author = self.get_argument('author', '')
+        text = self.get_argument('text', '')
+        if not author:
+            data = { "data": [] }
+        else:
+            data = { "author": author, "text": text }
+            comments.insert(data)
+
+        self.write(data)
+
+
+class TweetsDataHandler(tornado.web.RequestHandler):
+    def get(self):
+        db = self.settings["db"]
+        tweets = db.react_tweets.tweets
+
+
+        pass
