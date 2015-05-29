@@ -12,9 +12,9 @@ import settings
 
 def make_app():
     return tornado.web.Application([
-        (r"/", handlers.MainHandler),
-        (r"/comments", handlers.CommentsHandler),
-        (r"/api/comments", handlers.CommentsDataHandler),
+        (r"/", handlers.base.MainHandler),
+        (r"/comments", handlers.comments.CommentsHandler),
+        (r"/api/comments", handlers.comments.CommentsDataHandler),
         (r"/static/(.*)", tornado.web.StaticFileHandler,
             {"path": settings.settings['static_path']}),
     ], **settings.settings)
