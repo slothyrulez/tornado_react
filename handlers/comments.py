@@ -3,7 +3,7 @@
 import tornado
 import motor
 
-from .base import BaseHandler, JsonHandler
+from .base import BaseHandler, BsonHandler
 
 class CommentsHandler(BaseHandler):
 
@@ -11,7 +11,7 @@ class CommentsHandler(BaseHandler):
         self.render_jinja("comments.html")
 
 
-class CommentsDataHandler(JsonHandler):
+class CommentsDataHandler(BsonHandler):
 
     @tornado.gen.coroutine
     def get_comments(self, db):

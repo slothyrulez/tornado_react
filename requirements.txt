@@ -11,3 +11,4 @@ Jinja2==2.7.3
 MarkupSafe==0.23
 tornado==4.1
 motor==0.4
+invoke==0.10.1

@@ -130,6 +130,12 @@ class JsonHandler(BaseHandler):
         self.write_json()
 
     def write_json(self):
+        output = json.dumps(self.response)
+        self.write(output)
+
+
+class BsonHandler(JsonHandler):
+    def write_json(self):
         output = dumps(self.response)
         self.write(output)
 
